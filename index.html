@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Made for Kian ❤️</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #fefefe; }
+    h1 { color: #d63384; }
+    canvas { border: 2px solid #333; margin-top: 20px; cursor: grab; }
+  </style>
+</head>
+<body>
+  <h1>Made with Love for Kian ❤️</h1>
+  <p>Complete our photo puzzle 💕</p>
+  <canvas id="puzzle" width="400" height="400"></canvas>
+  <script>
+    const rows = 3, cols = 3;
+    const canvas = document.getElementById("puzzle");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.src = "kianandkate.jpg"; // your photo should be in the same folder as index.html
+
+    let pieces = [], pieceWidth, pieceHeight, dragged = null;
+
+    img.onload = () => {
+      pieceWidth = canvas.width / cols;
+      pieceHeight = canvas.height / rows;
+
+      // Create pieces with random shuffle
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          pieces.push({row: r, col: c, x: Math.random()*300, y: Math.random()*300});
+        }
+      }
+      draw();
+    };
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        ctx.drawImage(
+          img,
+          p.col * pieceWidth, p.row * pieceHeight, pieceWidth, pieceHeight,
+          p.x, p.y, pieceWidth, pieceHeight
+        );
+        ctx.strokeRect(p.x, p.y, pieceWidth, pieceHeight);
+      });
+    }
+
+    canvas.onmousedown = e => {
+      const x = e.offsetX, y = e.offsetY;
+      dragged = pieces.find(p => x > p.x && x < p.x+pieceWidth && y > p.y && y < p.y+pieceHeight);
+    };
+    canvas.onmousemove = e => {
+      if (!dragged) return;
+      dragged.x = e.offsetX - pieceWidth/2;
+      dragged.y = e.offsetY - pieceHeight/2;
+      draw();
+    };
+    canvas.onmouseup = () => { dragged = null; };
+  </script>
+</body>
+</html>
